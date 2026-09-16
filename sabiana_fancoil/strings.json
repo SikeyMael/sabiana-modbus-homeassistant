@@ -1,0 +1,35 @@
+{
+  "title": "Sabiana Fancoil",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Bus Modbus Sabiana",
+        "description": "Inserisci la porta seriale a cui è collegato l'adattatore RS485 (es. /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_...). Velocità, bit e parità sono fissati dal protocollo Sabiana e non sono configurabili.",
+        "data": {
+          "port": "Porta seriale"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Questa porta seriale è già configurata."
+    }
+  },
+  "config_subentries": {
+    "fancoil": {
+      "title": "Fancoil",
+      "step": {
+        "user": {
+          "title": "Aggiungi fancoil",
+          "description": "Inserisci il numero di slave impostato sui dip-switch della scheda e un nome per la stanza.",
+          "data": {
+            "room_name": "Nome stanza",
+            "slave": "Indirizzo slave (1-60)"
+          }
+        }
+      },
+      "error": {
+        "slave_already_used": "Questo indirizzo slave è già usato da un altro fancoil."
+      }
+    }
+  }
+}

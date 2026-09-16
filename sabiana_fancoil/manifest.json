@@ -1,0 +1,11 @@
+{
+  "domain": "sabiana_fancoil",
+  "name": "Sabiana Fancoil",
+  "codeowners": ["@paolo"],
+  "config_flow": true,
+  "documentation": "https://github.com/tuo-utente/sabiana_fancoil",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/tuo-utente/sabiana_fancoil/issues",
+  "requirements": ["pymodbus>=3.7.0"],
+  "version": "0.1.0"
+}
