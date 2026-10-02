@@ -14,7 +14,7 @@ from homeassistant.config_entries import (
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 
-from .const import CONF_PORT, CONF_ROOM_NAME, CONF_SLAVE, DOMAIN, SUBENTRY_TYPE_FANCOIL
+from .const import CONF_PORT, CONF_ROOM_NAME, CONF_SLAVE, CONF_TEMP_SENSOR, DOMAIN, SUBENTRY_TYPE_FANCOIL
 
 
 class SabianaFancoilConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -75,6 +75,9 @@ class FancoilSubentryFlowHandler(ConfigSubentryFlow):
                 vol.Required(CONF_ROOM_NAME): selector.TextSelector(),
                 vol.Required(CONF_SLAVE): selector.NumberSelector(
                     selector.NumberSelectorConfig(min=1, max=60, mode="box")
+                ),
+                vol.Optional(CONF_TEMP_SENSOR): selector.EntitySelector(
+                    selector.EntitySelectorConfig(domain="sensor")
                 ),
             }
         )

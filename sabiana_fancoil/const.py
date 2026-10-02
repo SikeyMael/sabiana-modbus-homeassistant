@@ -38,6 +38,7 @@ SERIAL_STOPBITS = 1
 CONF_PORT = "port"
 CONF_SLAVE = "slave"
 CONF_ROOM_NAME = "room_name"
+CONF_TEMP_SENSOR = "temp_sensor"
 
 SUBENTRY_TYPE_FANCOIL = "fancoil"
 
