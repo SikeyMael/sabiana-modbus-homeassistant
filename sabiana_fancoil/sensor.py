@@ -29,7 +29,7 @@ class SabianaSensor(SabianaEntity, SensorEntity):
         super().__init__(coordinator, subentry_id)
         self._definition = definition
         self._attr_unique_id = f"{subentry_id}_{definition.key}"
-        self._attr_name = definition.name
+        self._attr_translation_key = definition.key
         self._attr_native_unit_of_measurement = definition.unit
         self._attr_entity_category = definition.entity_category
         self._attr_suggested_display_precision = definition.precision
