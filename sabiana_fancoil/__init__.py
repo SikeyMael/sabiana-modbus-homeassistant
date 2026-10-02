@@ -1,10 +1,10 @@
-\"\"\"Integrazione Sabiana Fancoil.
+\"\"\"Sabiana Fancoil integration.
 
-Un config entry = un bus RS485 (una porta seriale, un client Modbus
-condiviso). Ogni fancoil collegato al bus è una config subentry
-(\"fancoil\"), aggiunta dall'utente inserendo solo il numero di slave e
-un nome stanza. Ad ogni subentry corrisponde un dispositivo HA e un
-SabianaCoordinator dedicato (vedi coordinator.py).
+A config entry = an RS485 bus (a serial port, a shared Modbus client).
+Each fancoil connected to the bus is a config subentry (\"fancoil\"),
+added by the user by entering only the slave number and a room name.
+Each subentry corresponds to an HA device and a dedicated SabianaCoordinator
+(see coordinator.py).
 \"\"\"
 from __future__ import annotations
 
@@ -39,10 +39,10 @@ PLATFORMS: list[Platform] = [
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    \"\"\"Crea il client Modbus condiviso e un coordinator per ogni fancoil già aggiunto.\"\"\"
-    # Import qui, non in cima al file: pymodbus viene installato da HA solo
-    # dopo aver letto \"requirements\" dal manifest, al primo avvio dopo
-    # l'installazione della custom integration.
+    \"\"\"Create the shared Modbus client and a coordinator for each added fancoil.\"\"\"
+    # Imported here, not at the top of the file: pymodbus is installed by HA only
+    # after reading \"requirements\" from the manifest, on the first start after
+    # installing the custom integration.
     from pymodbus.client import AsyncModbusSerialClient
 
     client = AsyncModbusSerialClient(
@@ -56,7 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     connected = await client.connect()
     if not connected:
         raise ConnectionError(
-            f\"Impossibile aprire la porta seriale {entry.data[CONF_PORT]} per il bus Sabiana\"
+            f\"Unable to open serial port {entry.data[CONF_PORT]} for Sabiana bus\"
         )
 
     bus = ModbusBus(client=client, lock=asyncio.Lock())
@@ -87,12 +87,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 client.close()
         raise
 
-    # Se l'utente aggiunge o rimuove un fancoil dall'interfaccia, la cosa
-    # più semplice e sicura in questa prima versione è ricaricare l'intero
-    # config entry: il bus viene rimontato e i coordinator ricreati per
-    # tutte le subentry correnti. Comporta una breve interruzione di TUTTI
-    # i fancoil quando se ne aggiunge uno nuovo, accettabile per un'operazione
-    # rara come \"aggiungi un fancoil\".
+    # If the user adds or removes a fancoil from the UI, reloading the entire
+    # config entry is the simplest and safest approach: the bus is remounted
+    # and coordinators are recreated for all current subentries. This causes
+    # a brief interruption of ALL fancoils when a new one is added, which is
+    # acceptable for a rare operation like \"add a fancoil\".
     entry.async_on_unload(entry.add_update_listener(_async_reload_entry))
 
     return True
