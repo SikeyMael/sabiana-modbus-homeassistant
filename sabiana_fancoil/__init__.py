@@ -1,11 +1,11 @@
-"""Integrazione Sabiana Fancoil.
+\"\"\"Integrazione Sabiana Fancoil.
 
 Un config entry = un bus RS485 (una porta seriale, un client Modbus
 condiviso). Ogni fancoil collegato al bus è una config subentry
-("fancoil"), aggiunta dall'utente inserendo solo il numero di slave e
+(\"fancoil\"), aggiunta dall'utente inserendo solo il numero di slave e
 un nome stanza. Ad ogni subentry corrisponde un dispositivo HA e un
 SabianaCoordinator dedicato (vedi coordinator.py).
-"""
+\"\"\"
 from __future__ import annotations
 
 import asyncio
@@ -39,9 +39,9 @@ PLATFORMS: list[Platform] = [
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Crea il client Modbus condiviso e un coordinator per ogni fancoil già aggiunto."""
+    \"\"\"Crea il client Modbus condiviso e un coordinator per ogni fancoil già aggiunto.\"\"\"
     # Import qui, non in cima al file: pymodbus viene installato da HA solo
-    # dopo aver letto "requirements" dal manifest, al primo avvio dopo
+    # dopo aver letto \"requirements\" dal manifest, al primo avvio dopo
     # l'installazione della custom integration.
     from pymodbus.client import AsyncModbusSerialClient
 
@@ -56,34 +56,43 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     connected = await client.connect()
     if not connected:
         raise ConnectionError(
-            f"Impossibile aprire la porta seriale {entry.data[CONF_PORT]} per il bus Sabiana"
+            f\"Impossibile aprire la porta seriale {entry.data[CONF_PORT]} per il bus Sabiana\"
         )
 
     bus = ModbusBus(client=client, lock=asyncio.Lock())
 
-    coordinators: dict[str, SabianaCoordinator] = {}
-    for subentry_id, subentry in entry.subentries.items():
-        if subentry.subentry_type != SUBENTRY_TYPE_FANCOIL:
-            continue
-        coordinator = SabianaCoordinator(
-            hass,
-            bus,
-            slave=subentry.data[CONF_SLAVE],
-            room_name=subentry.data[CONF_ROOM_NAME],
-        )
-        await coordinator.async_config_entry_first_refresh()
-        coordinators[subentry_id] = coordinator
+    try:
+        coordinators: dict[str, SabianaCoordinator] = {}
+        for subentry_id, subentry in entry.subentries.items():
+            if subentry.subentry_type != SUBENTRY_TYPE_FANCOIL:
+                continue
+            coordinator = SabianaCoordinator(
+                hass,
+                bus,
+                slave=subentry.data[CONF_SLAVE],
+                room_name=subentry.data[CONF_ROOM_NAME],
+            )
+            await coordinator.async_config_entry_first_refresh()
+            coordinators[subentry_id] = coordinator
 
-    entry.runtime_data = {"bus": bus, "coordinators": coordinators}
+        entry.runtime_data = {\"bus\": bus, \"coordinators\": coordinators}
 
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    except Exception:
+        if hasattr(client, \"close\"):
+            if asyncio.iscoroutinefunction(client.close):
+                await client.close()
+            else:
+                client.close()
+        raise
 
     # Se l'utente aggiunge o rimuove un fancoil dall'interfaccia, la cosa
     # più semplice e sicura in questa prima versione è ricaricare l'intero
     # config entry: il bus viene rimontato e i coordinator ricreati per
     # tutte le subentry correnti. Comporta una breve interruzione di TUTTI
     # i fancoil quando se ne aggiunge uno nuovo, accettabile per un'operazione
-    # rara come "aggiungi un fancoil".
+    # rara come \"aggiungi un fancoil\".
     entry.async_on_unload(entry.add_update_listener(_async_reload_entry))
 
     return True
@@ -95,7 +104,12 @@ async def _async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unloaded:
-        bus: ModbusBus = entry.runtime_data["bus"]
-        bus.client.close()
+    if unloaded and entry.runtime_data and \"bus\" in entry.runtime_data:
+        bus: ModbusBus = entry.runtime_data[\"bus\"]
+        if bus and bus.client:
+            if hasattr(bus.client, \"close\"):
+                if asyncio.iscoroutinefunction(bus.client.close):
+                    await bus.client.close()
+                else:
+                    bus.client.close()
     return unloaded
