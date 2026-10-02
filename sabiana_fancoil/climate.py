@@ -25,7 +25,7 @@ from .const import CLIMATE, FAN_SPEED
 from .coordinator import SabianaCoordinator
 from .entity import SabianaEntity
 
-FAN_MODE_MAP = {"Automatico": 0, "Minimo": 1, "Medio": 2, "Massimo": 3}
+FAN_MODE_MAP = {"auto": 0, "low": 1, "medium": 2, "high": 3}
 
 
 async def async_setup_entry(
