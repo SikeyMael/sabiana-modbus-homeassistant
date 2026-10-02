@@ -31,7 +31,7 @@ class SabianaSwitch(SabianaEntity, SwitchEntity):
         super().__init__(coordinator, subentry_id)
         self._definition = definition
         self._attr_unique_id = f"{subentry_id}_{definition.key}"
-        self._attr_name = definition.name
+        self._attr_translation_key = definition.key
         self._attr_entity_category = definition.entity_category
 
     @property
