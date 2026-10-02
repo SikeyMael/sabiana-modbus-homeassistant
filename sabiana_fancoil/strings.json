@@ -3,15 +3,15 @@
   "config": {
     "step": {
       "user": {
-        "title": "Bus Modbus Sabiana",
-        "description": "Inserisci la porta seriale a cui è collegato l'adattatore RS485 (es. /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_...). Velocità, bit e parità sono fissati dal protocollo Sabiana e non sono configurabili.",
+        "title": "Sabiana Modbus Bus",
+        "description": "Enter the serial port where the RS485 adapter is connected (e.g., /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_...). Speed, bits, and parity are fixed by the Sabiana protocol and are not configurable.",
         "data": {
-          "port": "Porta seriale"
+          "port": "Serial port"
         }
       }
     },
     "abort": {
-      "already_configured": "Questa porta seriale è già configurata."
+      "already_configured": "This serial port is already configured."
     }
   },
   "config_subentries": {
@@ -19,16 +19,45 @@
       "title": "Fancoil",
       "step": {
         "user": {
-          "title": "Aggiungi fancoil",
-          "description": "Inserisci il numero di slave impostato sui dip-switch della scheda e un nome per la stanza.",
+          "title": "Add Fancoil",
+          "description": "Enter the slave number set on the dip-switches of the board and a name for the room.",
           "data": {
-            "room_name": "Nome stanza",
-            "slave": "Indirizzo slave (1-60)"
+            "room_name": "Room name",
+            "slave": "Slave address (1-60)"
           }
         }
       },
       "error": {
-        "slave_already_used": "Questo indirizzo slave è già usato da un altro fancoil."
+        "slave_already_used": "This slave address is already used by another fancoil."
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "model": { "name": "Hardware Model" },
+      "temp_t3": { "name": "T3 Probe" },
+      "isteresi": { "name": "Hysteresis" }
+    },
+    "switch": {
+      "power": { "name": "Power" },
+      "sonda_esterna_abilitata": { "name": "External Probe via MB" }
+    },
+    "select": {
+      "fan_speed": {
+        "name": "Fan Speed",
+        "state": {
+          "auto": "Automatic",
+          "min": "Minimum",
+          "med": "Medium",
+          "max": "Maximum"
+        }
+      },
+      "season": {
+        "name": "Season Mode",
+        "state": {
+          "cool": "Cool",
+          "heat": "Heat"
+        }
       }
     }
   }
