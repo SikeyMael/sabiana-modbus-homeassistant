@@ -26,9 +26,8 @@ async def async_setup_entry(
 
 
 class FanSpeedSelect(SabianaEntity, SelectEntity):
-    _attr_unique_id_suffix = "fan_speed"
-    _attr_name = "Velocità Ventola"
-    _attr_options = list(FAN_SPEED.options)
+    _attr_translation_key = "fan_speed"
+    _attr_options = ["auto", "min", "med", "max"]
 
     def __init__(self, coordinator: SabianaCoordinator, subentry_id: str) -> None:
         super().__init__(coordinator, subentry_id)
@@ -38,23 +37,23 @@ class FanSpeedSelect(SabianaEntity, SelectEntity):
     def current_option(self) -> str | None:
         data = self.coordinator.data
         if data.get("fan_auto") == 1:
-            return "Automatico"
+            return "auto"
         if data.get("fan_min") == 1:
-            return "Minimo"
+            return "min"
         if data.get("fan_med") == 1:
-            return "Medio"
+            return "med"
         if data.get("fan_max") == 1:
-            return "Massimo"
+            return "max"
         return None
 
     async def async_select_option(self, option: str) -> None:
-        value = {"Automatico": 0, "Minimo": 1, "Medio": 2, "Massimo": 3}[option]
+        value = {"auto": 0, "min": 1, "med": 2, "max": 3}[option]
         await self.coordinator.async_write_register(FAN_SPEED.command_address, value)
 
 
 class SeasonSelect(SabianaEntity, SelectEntity):
-    _attr_name = "Modalità"
-    _attr_options = ["Estate", "Inverno"]
+    _attr_translation_key = "season"
+    _attr_options = ["cool", "heat"]
 
     def __init__(self, coordinator: SabianaCoordinator, subentry_id: str) -> None:
         super().__init__(coordinator, subentry_id)
@@ -64,11 +63,11 @@ class SeasonSelect(SabianaEntity, SelectEntity):
     def current_option(self) -> str | None:
         season = self.coordinator.data.get("climate_season")
         if season == 0:
-            return "Estate"
+            return "cool"
         if season == 1:
-            return "Inverno"
+            return "heat"
         return None
 
     async def async_select_option(self, option: str) -> None:
-        value = {"Estate": 0, "Inverno": 1}[option]
+        value = {"cool": 0, "heat": 1}[option]
         await self.coordinator.async_write_register(CLIMATE.mode_write_address, value)
