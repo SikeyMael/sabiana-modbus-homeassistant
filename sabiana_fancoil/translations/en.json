@@ -1,0 +1,64 @@
+{
+  "title": "Sabiana Fancoil",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sabiana Modbus Bus",
+        "description": "Enter the serial port where the RS485 adapter is connected (e.g., /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_...). Speed, bits, and parity are fixed by the Sabiana protocol and are not configurable.",
+        "data": {
+          "port": "Serial port"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This serial port is already configured."
+    }
+  },
+  "config_subentries": {
+    "fancoil": {
+      "title": "Fancoil",
+      "step": {
+        "user": {
+          "title": "Add Fancoil",
+          "description": "Enter the slave number set on the dip-switches of the board and a name for the room.",
+          "data": {
+            "room_name": "Room name",
+            "slave": "Slave address (1-60)"
+          }
+        }
+      },
+      "error": {
+        "slave_already_used": "This slave address is already used by another fancoil."
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "model": { "name": "Hardware Model" },
+      "temp_t3": { "name": "T3 Probe" },
+      "isteresi": { "name": "Hysteresis" }
+    },
+    "switch": {
+      "power": { "name": "Power" },
+      "sonda_esterna_abilitata": { "name": "External Probe via MB" }
+    },
+    "select": {
+      "fan_speed": {
+        "name": "Fan Speed",
+        "state": {
+          "auto": "Automatic",
+          "min": "Minimum",
+          "med": "Medium",
+          "max": "Maximum"
+        }
+      },
+      "season": {
+        "name": "Season Mode",
+        "state": {
+          "cool": "Cool",
+          "heat": "Heat"
+        }
+      }
+    }
+  }
+}
